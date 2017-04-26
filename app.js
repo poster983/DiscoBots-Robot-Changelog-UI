@@ -53,10 +53,11 @@ app.use(require('node-sass-middleware')({
   sourceMap: false
 }));
 app.use(express.static(path.join(__dirname, 'public')));
-
+app.use('/bower_components', express.static(path.join(__dirname, 'bower_components')));
+app.use('/bower_components', express.static(path.join(__dirname, 'components')));
 // TOP LEVEL ROUTE
 app.get('*', function(req, res) {
-    res.sendfile('./public/index.html', {root: '.'}); 
+    res.sendFile('./public/index.html', {root: '.'}); 
 });
 
 

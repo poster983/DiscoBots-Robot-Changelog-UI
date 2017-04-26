@@ -40,6 +40,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         color: #212121;
         font-size: 22px;
       }
+      paper-button.fancy {
+        background: green;
+        color: yellow;
+      }
+
+      paper-button.fancy:hover {
+        background: lime;
+      }
+      paper-button.red{
+        background: red;
+      }
+      paper-button[disabled],
+      paper-button[toggles][active] {
+        background: red;
+      }
     </style>
   </template>
 </dom-module>
