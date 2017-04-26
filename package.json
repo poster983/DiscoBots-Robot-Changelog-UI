@@ -1,0 +1,41 @@
+{
+  "name": "passport-live",
+  "version": "0.0.3",
+  "description": "Passport-Live is a modern web app for schools that helps them manage passes.",
+  "author": "Joseph Hassell <hi@josephhassell.com> (http://josephhassell.com/)",
+  "keywords": [
+    "passport",
+    "pass",
+    "school",
+    "student",
+    "express"
+  ],
+  "private": true,
+  "scripts": {
+    "start": "nodemon ./bin/www",
+    "lint": "eslint . --ext js,html --ignore-path .gitignore",
+    "test": "npm run lint && polymer test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/poster983/Passport-Live"
+  },
+  "bugs": {
+    "url": "https://github.com/poster983/Passport-Live/issues"
+  },
+  "dependencies": {
+    "body-parser": "~1.16.0",
+    "connect-ensure-login": "latest",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.0",
+    "express": "~4.14.1",
+    "express-session": "latest",
+    "morgan": "~1.7.0",
+    "mustache-express": "1.2.4",
+    "node-sass-middleware": "0.9.8",
+    "nodemon": "latest",
+    "serve-favicon": "~2.3.2",
+    "socket.io": "^1.7.3"
+  },
+  "license": "AGPL-3.0"
+}

@@ -1,0 +1,5 @@
+{
+  "directory": "public/bower_components/",
+  "json" : "bower.json",
+  "shorthand-resolver": "https://github.com/{{package}}/{{package}}.git"
+ }
