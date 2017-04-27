@@ -1,14 +1,13 @@
 {
-  "name": "passport-live",
+  "name": "DiscoBots-Robot-Changelog-UI",
   "version": "0.0.3",
-  "description": "Passport-Live is a modern web app for schools that helps them manage passes.",
+  "description": "A changelog for the DiscoBots VEX robot.",
   "author": "Joseph Hassell <hi@josephhassell.com> (http://josephhassell.com/)",
   "keywords": [
-    "passport",
-    "pass",
-    "school",
-    "student",
-    "express"
+    "changelog",
+    "robot",
+    "polymer",
+    "VEX"
   ],
   "private": true,
   "scripts": {
@@ -19,10 +18,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/poster983/Passport-Live"
+    "url": "https://github.com/poster983/DiscoBots-Robot-Changelog-UI"
   },
   "bugs": {
-    "url": "https://github.com/poster983/Passport-Live/issues"
+    "url": "https://github.com/poster983/DiscoBots-Robot-Changelog-UI/issues"
   },
   "dependencies": {
     "body-parser": "~1.16.0",
@@ -39,5 +38,5 @@
     "socket.io": "^1.7.3",
     "bower": "latest"
   },
-  "license": "AGPL-3.0"
+  "license": "UNLICENSED"
 }
