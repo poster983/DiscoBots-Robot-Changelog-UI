@@ -14,7 +14,8 @@
   "scripts": {
     "start": "nodemon ./bin/www",
     "lint": "eslint . --ext js,html --ignore-path .gitignore",
-    "test": "npm run lint && polymer test"
+    "test": "npm run lint && polymer test",
+    "postinstall": "./node_modules/bower/bin/bower install"
   },
   "repository": {
     "type": "git",
@@ -35,7 +36,8 @@
     "node-sass-middleware": "0.9.8",
     "nodemon": "latest",
     "serve-favicon": "~2.3.2",
-    "socket.io": "^1.7.3"
+    "socket.io": "^1.7.3",
+    "bower": "latest"
   },
   "license": "AGPL-3.0"
 }
