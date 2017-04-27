@@ -2,7 +2,7 @@
   "entrypoint": "public/index.html",
   "shell": "public/src/my-app.html",
   "fragments": [
-    "public/src/my-view1.html",
+    "public/src/db-botlog.html",
     "public/src/my-view2.html",
     "public/src/my-view3.html",
     "public/src/my-view404.html"
