@@ -103,6 +103,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <script>
     class DbBotLog extends Polymer.Element {
       static get is() { return 'db-botlog'; }
+      static get supThis() { return this; }
       ready() {
         super.ready();
         var supThis = this;
@@ -113,11 +114,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           supThis.$find('#log1').attr('output', msg);
 
         });
-        $(function() {
-          DbBotLog.prototype.sendNewChangelog = function() {
-            console.log(supThis.$find('#log1').attr('output'))
-          }
-        });
+
       }
 
     }
@@ -128,8 +125,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     Node.prototype.$find = function(selector){
                   return jQuery(this.shadowRoot.querySelectorAll(selector))
      }
+     /*
+    DbBotLog.prototype.sendNewChangelog = function () {
+            console.log(DbBotLog.$find('#log1').attr('output'))
+          }
+          */
 
-    
-
+        function sendNewChangelog() {
+            console.log(new Polymer.IronMeta().byKey('newChangelogOutput').getAttribute('value'));
+          }
+//.$find('#log1').attr('output')
   </script>
 </dom-module>
