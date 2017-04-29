@@ -9,7 +9,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+
 
 <link rel="import" href="shared-styles.html">
 
@@ -31,7 +31,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 
     </style>
-
+    <log-card id="log1" output=""></log-card>
     <div class="card">
       <div class="circle">1</div>
       <h1>View One</h1>
@@ -92,18 +92,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </paper-listbox>
         </paper-dropdown-menu>
     </div>
-  <paper-fab onclick="{{newChange}}" icon="build"></paper-fab>
     <!-- New Change -->
-    <paper-dialog id="newChange">
-      <h2>Header</h2>
-      <paper-dialog-scrollable>
-        Lorem ipsum...
-      </paper-dialog-scrollable>
-      <div class="buttons">
-        <paper-button dialog-dismiss>Cancel</paper-button>
-        <paper-button dialog-confirm autofocus>Accept</paper-button>
-      </div>
-    </paper-dialog>
+  <paper-fab icon="build"></paper-fab>
+   
 
 
 
@@ -112,28 +103,33 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <script>
     class DbBotLog extends Polymer.Element {
       static get is() { return 'db-botlog'; }
-    }
+      ready() {
+        super.ready();
+        var supThis = this;
+            
+        socket.emit('chat message', 'hello');
+        socket.on('chat message', function(msg){
+          console.log(msg);
+          supThis.$find('#log1').attr('output', msg);
 
+        });
+        $(function() {
+          DbBotLog.prototype.sendNewChangelog = function() {
+            console.log(supThis.$find('#log1').attr('output'))
+          }
+        });
+      }
+
+    }
+    
     window.customElements.define(DbBotLog.is, DbBotLog);
 
+    //let jquery selectors work
+    Node.prototype.$find = function(selector){
+                  return jQuery(this.shadowRoot.querySelectorAll(selector))
+     }
 
-    function newChangeDialog() {
-            var dialog = document.querySelector('#newChange');
-            this.setDialog(true);
-            dialog.open();
-        };
-
-    function setDialog(open) {
-            if (open) {
-                var node = document.querySelector('#dialogFeedback');
-                var textnode = document.querySelector("body");
-                textnode.appendChild(node);
-            } else {
-                var node = document.querySelector('#dialogFeedback');
-                var textnode = document.querySelector("my-topnavigation");
-                textnode.appendChild(node);
-            }
-        }
+    
 
   </script>
 </dom-module>

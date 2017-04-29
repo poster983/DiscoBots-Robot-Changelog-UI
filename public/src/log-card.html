@@ -1,0 +1,35 @@
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+
+<dom-module id="log-card">
+
+  <template>
+	 <style type="text/css">
+		paper-button {
+	        background:  #D50000;
+	        color: white;
+	      }
+	</style>
+    <p id="output">[[output]]</p>
+    <paper-input value="{{output}}" label="Write Here!"></paper-input>
+    <paper-button onclick="sendNewChangelog()" raised class="red">Send</paper-button>
+  </template>
+
+  <script>
+    class LogCard extends Polymer.Element {
+      static get is() { return "log-card"; }
+
+      static get properties() {
+        return {
+          output: {
+            type: String,
+            value: ''
+          },
+
+        };
+      }
+    }
+    customElements.define(LogCard.is, LogCard);
+    
+  </script>
+
+</dom-module>
