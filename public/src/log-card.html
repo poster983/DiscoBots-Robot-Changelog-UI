@@ -69,7 +69,7 @@
 			    <paper-input value="{{name}}" label="Your Name"></paper-input>
 		    </div>
 
-
+{{editmode}}
 
 		   <div id="contentStatic"  hidden$="{{editmode}}">
 			  	<div class="title">[[title]]
@@ -156,13 +156,15 @@
       }
       _entereditmode(event) {
       	this.editmode = true;
+	      console.log(this.editmode)
+	this.notifyPath('editmode');
       }
       _exiteditmode(event) {
       	this.editmode = false;
       	/*console.log(this.shadowRoot.querySelectorAll("#contentStatic"))
       	this.shadowRoot.querySelectorAll("#contentStatic").style.display = 'none';*/
       	console.log(this.editmode)
-
+	this.notifyPath('editmode');
       }
 
       //followup-changed.addEventListener
