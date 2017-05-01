@@ -61,13 +61,13 @@
 	<div class="app-grid">
 	<paper-card>
 		  <div class="card-content">
-		  	<template is="dom-if" if="{{editmode}}" restamp="true" >
+		  	<div id="contentStatic"  hidden$="{{!editmode}}">
 			    <paper-input value="{{title}}" label="Title"></paper-input>
 			    <paper-textarea value="{{desc}}" label="Description of Change"></paper-textarea>
 			    <paper-chip-input label="(Hit enter) Change may effect:" chips='{{followup}}' closable></paper-chip-input> 
 			    <!--TODO: DATE PICKER-->
 			    <paper-input value="{{name}}" label="Your Name"></paper-input>
-		    </template>
+		    </div>
 
 
 
