@@ -55,7 +55,7 @@ app.use(require('node-sass-middleware')({
 }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/bower_components', express.static(path.join(__dirname, 'bower_components')));
-app.use('/bower_components', express.static(path.join(__dirname, 'polymer_components')));
+app.use('/bower_components', express.static(path.join(__dirname, 'custom_polymer_components')));
 // TOP LEVEL ROUTE
 app.get('*', function(req, res) {
     res.sendFile('./public/index.html', {root: '.'}); 

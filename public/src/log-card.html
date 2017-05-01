@@ -1,18 +1,106 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
-
+<link rel="import" href="../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../bower_components/paper-chip/paper-chip.html">
+<link rel="import" href="../bower_components/paper-chip-returnable/paper-chip-input.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../bower_components/paper-styles/color.html">
+<link rel="import" href="../bower_components/paper-styles/typography.html">
+<link rel="import" href="../bower_components/paper-styles/typography.html">
+<link rel="import" href="../bower_components/app-layout/app-grid/app-grid-style.html">
+<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <dom-module id="log-card">
 
   <template>
-	 <style type="text/css">
-		paper-button {
+
+	 <style include="app-grid-style" type="text/css">
+	 	:host {
+      --app-grid-columns: 1;
+    }
+		paper-button.red {
 	        background:  #D50000;
 	        color: white;
 	      }
+	      paper-button.edit {
+	        color:  #D50000;
+	      }
+	       paper-button.save {
+	        color:  var(--paper-green-500);;
+	      }
+	      /*app-grid-style*/
+	  .card {
+        margin: 24px;
+        padding: 16px;
+        color: #757575;
+        border-radius: 5px;
+        background-color: #fff;
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+      }
+      paper-card {
+
+      	margin: 24px 24px 24px 24px !important;
+      	padding-right: 24px;
+        width: 100%;
+      	--paper-card-header-color: #2196F3
+      }
+      paper-card .title{
+      	color: #2196F3;
+      	@apply(--paper-font-headline);
+      }
+      paper-card .date{
+      	color: var(--paper-grey-600);
+      	float: right;
+		font-size: 15px;
+		vertical-align: middle;
+      }
+      paper-card .description{
+      	 color: var(--paper-grey-600);
+      }
 	</style>
-    <p id="output">[[output]]</p>
-    <paper-input value="{{output}}" label="Write Here!"></paper-input>
-    <paper-button onclick="sendNewChangelog()" raised class="red">Send</paper-button>
-    <iron-meta key="newChangelogOutput" value="{{output}}"></iron-meta>
+	<div class="app-grid">
+	<paper-card>
+		  <div class="card-content">
+		  	<template is="dom-if" if="{{editmode}}" restamp="true" >
+			    <paper-input value="{{title}}" label="Title"></paper-input>
+			    <paper-textarea value="{{desc}}" label="Description of Change"></paper-textarea>
+			    <paper-chip-input label="(Hit enter) Change may effect:" chips='{{followup}}' closable></paper-chip-input> 
+			    <!--TODO: DATE PICKER-->
+			    <paper-input value="{{name}}" label="Your Name"></paper-input>
+		    </template>
+
+
+
+		    {{editmode}}
+
+		   <div id="contentStatic"  hidden$="{{editmode}}">
+			  	<div class="title">[[title]]
+			  		<div class="date">
+			  			<iron-icon icon="today"></iron-icon>
+			  			<span>[[date]]</span>
+		  			</div>
+			  	</div>
+			  	<div>Change may effect:</div>
+			  	<template is="dom-repeat" items="{{followuparray}}">
+	 				<paper-chip label$="[[item]]"></paper-chip>
+			  	</template>
+			  	<div>Posted by: [[name]]</div>
+			  	<p class="description">[[desc]]</p>
+		  	</div>
+			  </div>
+		  
+		  <div class="card-actions">
+		  <template is="dom-if" if="{{editmode}}">
+		  		<paper-button onclick$="sendNewChangelog('[[output]]')" class="save">Save</paper-button>
+		  		<paper-button onclick="{{_exiteditmode}}" class="edit">Cancel</paper-button>
+		  </template>
+		   <template is="dom-if" if="{{!editmode}}">
+		    	<paper-button onclick="{{_entereditmode}}" class="edit">Edit</paper-button>
+	    	</template>
+		  </div>
+	</paper-card>
+	</div>
+   
   </template>
 
   <script>
@@ -21,16 +109,62 @@
 
       static get properties() {
         return {
-          output: {
+          title: {
+            type: String,
+            value: 'New Change'
+          },
+          desc: {
             type: String,
             value: ''
           },
-
+          followup: {
+            type: String,
+            value: '',
+            observer: '_followupchanged'
+          },
+          followuparray: {
+            type: Array,
+            value: function () {
+                    return [];
+            	},
+          },
+          editmode: {
+          	type: Boolean,
+          	reflectToAttribute: true,
+          	notify: true
+          },
+          name: {
+          	type: String,
+          	value: ''
+          },
+          date: {
+          	type: String,
+          	value: ''
+          }
         };
       }
+      _followupchanged() {
+		console.log(this.followup.split(","));
+      	//var array = JSON.parse("[" + this.followup + "]");
+      	//console.log(this.followuparray);
+      	this.followuparray = this.followup.split(",");
+      	console.log(this.followuparray);
+      }
+      _entereditmode(event) {
+      	this.editmode = true;
+      }
+      _exiteditmode(event) {
+      	this.editmode = false;
+      	/*console.log(this.shadowRoot.querySelectorAll("#contentStatic"))
+      	this.shadowRoot.querySelectorAll("#contentStatic").style.display = 'none';*/
+      	console.log(this.editmode)
+
+      }
+
+      //followup-changed.addEventListener
     }
     customElements.define(LogCard.is, LogCard);
-    
+
   </script>
 
 </dom-module>

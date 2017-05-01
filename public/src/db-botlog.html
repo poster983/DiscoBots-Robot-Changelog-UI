@@ -31,67 +31,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 
     </style>
-    <log-card id="log1" output=""></log-card>
-    <div class="card">
-      <div class="circle">1</div>
-      <h1>View One</h1>
-      <p>Ut labores minimum atomorum pro. Laudem tibique ut has.</p>
-      <p>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea.Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea.Cu mei vide viris gloriatur, at populo eripuit sit.</p>
-      <paper-button raised class="red">raised</paper-button>
-        <paper-dropdown-menu label="Dinosaurs">
-          <paper-listbox slot="dropdown-content" selected="1" class="dropdown-content">
-            <paper-item>allosaurus</paper-item>
-            <paper-item>brontosaurus</paper-item>
-            <paper-item>carcharodontosaurus</paper-item>
-            <paper-item>diplodocus</paper-item>
-          </paper-listbox>
-        </paper-dropdown-menu>
-    </div>
-    <div class="card">
-      <div class="circle">2</div>
-      <h1>View One</h1>
-      <p>Ut labores minimum atomorum pro. Laudem tibique ut has.</p>
-      <p>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea.Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea.Cu mei vide viris gloriatur, at populo eripuit sit.</p>
-      <paper-button raised class="red">raised</paper-button>
-        <paper-dropdown-menu label="Dinosaurs">
-          <paper-listbox slot="dropdown-content" selected="1" class="dropdown-content">
-            <paper-item>allosaurus</paper-item>
-            <paper-item>brontosaurus</paper-item>
-            <paper-item>carcharodontosaurus</paper-item>
-            <paper-item>diplodocus</paper-item>
-          </paper-listbox>
-        </paper-dropdown-menu>
-    </div>
-    <div class="card">
-      <div class="circle">3</div>
-      <h1>View One</h1>
-      <p>Ut labores minimum atomorum pro. Laudem tibique ut has.</p>
-      <p>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea.Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea.Cu mei vide viris gloriatur, at populo eripuit sit.</p>
-      <paper-button raised class="red">raised</paper-button>
-        <paper-dropdown-menu label="Dinosaurs">
-          <paper-listbox slot="dropdown-content" selected="1" class="dropdown-content">
-            <paper-item>allosaurus</paper-item>
-            <paper-item>brontosaurus</paper-item>
-            <paper-item>carcharodontosaurus</paper-item>
-            <paper-item>diplodocus</paper-item>
-          </paper-listbox>
-        </paper-dropdown-menu>
-    </div>
-    <div class="card">
-      <div class="circle">4</div>
-      <h1>View One</h1>
-      <p>Ut labores minimum atomorum pro. Laudem tibique ut has.</p>
-      <p>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea.Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea.Cu mei vide viris gloriatur, at populo eripuit sit.</p>
-      <paper-button raised class="red">raised</paper-button>
-        <paper-dropdown-menu label="Dinosaurs">
-          <paper-listbox slot="dropdown-content" selected="1" class="dropdown-content">
-            <paper-item>allosaurus</paper-item>
-            <paper-item>brontosaurus</paper-item>
-            <paper-item>carcharodontosaurus</paper-item>
-            <paper-item>diplodocus</paper-item>
-          </paper-listbox>
-        </paper-dropdown-menu>
-    </div>
+    <log-card id="log1" editmode=true output=""></log-card>
+    
     <!-- New Change -->
   <paper-fab icon="build"></paper-fab>
    
@@ -131,8 +72,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }
           */
 
-        function sendNewChangelog() {
-            console.log(new Polymer.IronMeta().byKey('newChangelogOutput').getAttribute('value'));
+        function sendNewChangelog(output) {
+          console.log(output);
+           
           }
 //.$find('#log1').attr('output')
   </script>
