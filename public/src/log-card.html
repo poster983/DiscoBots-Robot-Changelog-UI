@@ -109,16 +109,19 @@
         return {
           title: {
             type: String,
-            value: 'New Change'
+            value: 'New Change',
+	     reflectToAttribute: true,
           },
           desc: {
             type: String,
-            value: ''
+            value: '',
+	    reflectToAttribute: true,
           },
           followup: {
             type: String,
             value: '',
-            observer: '_followupchanged'
+            observer: '_followupchanged',
+	    reflectToAttribute: true,
           },
           followuparray: {
             type: Array,
@@ -134,11 +137,13 @@
           },
           name: {
           	type: String,
-          	value: ''
+          	value: '',
+		reflectToAttribute: true,
           },
           date: {
           	type: String,
-          	value: ''
+          	value: '',
+		reflectToAttribute: true,
           }
         };
       }
