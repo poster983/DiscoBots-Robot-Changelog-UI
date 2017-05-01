@@ -158,13 +158,15 @@
       	this.editmode = true;
 	      console.log(this.editmode)
 	this.notifyPath('editmode');
+	this.set('editmode', true);
       }
       _exiteditmode(event) {
       	this.editmode = false;
       	/*console.log(this.shadowRoot.querySelectorAll("#contentStatic"))
       	this.shadowRoot.querySelectorAll("#contentStatic").style.display = 'none';*/
       	console.log(this.editmode)
-	this.notifyPath('editmode');
+	this.set('editmode', false);
+	 console.log(this);    
       }
 
       //followup-changed.addEventListener
