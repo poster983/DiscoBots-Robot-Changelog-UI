@@ -71,8 +71,6 @@
 
 
 
-		    {{editmode}}
-
 		   <div id="contentStatic"  hidden$="{{editmode}}">
 			  	<div class="title">[[title]]
 			  		<div class="date">
@@ -131,7 +129,8 @@
           editmode: {
           	type: Boolean,
           	reflectToAttribute: true,
-          	notify: true
+          	notify: true,
+          	value: false
           },
           name: {
           	type: String,
