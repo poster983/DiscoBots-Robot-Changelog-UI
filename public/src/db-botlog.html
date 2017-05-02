@@ -31,7 +31,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 
     </style>
-    <log-card id="log1" editmode></log-card>
+    <log-card id="log1" isnew editmode></log-card>
     <log-card id="log2" title="New Arm" desc="We replaced the old arm with a lighter one so the robot wont fall over.  Unfortunately, we had to move the motors." followup="programmers,design notebook" name="Joseph" date="4-30-17"></log-card>
     <!-- New Change -->
   <paper-fab icon="build"></paper-fab>
@@ -52,7 +52,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         socket.emit('chat message', 'hello');
         socket.on('chat message', function(msg){
           console.log(msg);
-          supThis.$find('#log1').attr('output', msg);
+          supThis.$find('#log1').attr('desc', msg);
 
         });
 
@@ -72,10 +72,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }
           */
 
-        function sendNewChangelog(output) {
-          console.log(output);
-           
-          }
+    function sendNewChangelog(output) {
+      console.log(output);
+       
+      }
+
+
+
 //.$find('#log1').attr('output')
   </script>
 </dom-module>

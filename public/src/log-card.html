@@ -1,4 +1,4 @@
-<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-input/paper-textarea.html">
 <link rel="import" href="../bower_components/paper-chip/paper-chip.html">
@@ -69,9 +69,8 @@
 			    <paper-input value="{{name}}" label="Your Name"></paper-input>
 		    </div>
 
-{{editmode}}
 
-		   <div id="contentStatic"  hidden$="{{editmode}}">
+		   <div id="contentEdit"  hidden$="{{editmode}}">
 			  	<div class="title">[[title]]
 			  		<div class="date">
 			  			<iron-icon icon="today"></iron-icon>
@@ -88,12 +87,12 @@
 			  </div>
 		  
 		  <div class="card-actions">
-		  <template is="dom-if" if="{{editmode}}">
-		  		<paper-button onclick$="sendNewChangelog('[[output]]')" class="save">Save</paper-button>
-		  		<paper-button onclick="{{_exiteditmode}}" class="edit">Cancel</paper-button>
-		  </template>
-		   <template is="dom-if" if="{{!editmode}}">
-		    	<paper-button onclick="{{_entereditmode}}" class="edit">Edit</paper-button>
+		  <div id="contentEditBottom"  hidden$="{{!editmode}}">
+		  		<paper-button on-tap$="sendNewChangelog('[[title]]')" class="save">Save</paper-button>
+		  		<paper-button  id="cancelbutton" class="edit">Cancel</paper-button>
+		  </div>
+		   <div id="contentStaticBottom"  hidden$="{{editmode}}">
+		    	<paper-button id="editbutton" class="edit">Edit</paper-button>
 	    	</template>
 		  </div>
 	</paper-card>
@@ -104,32 +103,41 @@
   <script>
     class LogCard extends Polymer.Element {
       static get is() { return "log-card"; }
+      
 
       static get properties() {
         return {
           title: {
             type: String,
             value: 'New Change',
-	     reflectToAttribute: true,
+	     	reflectToAttribute: true
           },
           desc: {
             type: String,
             value: '',
-	    reflectToAttribute: true,
+	    	reflectToAttribute: true
           },
           followup: {
             type: String,
             value: '',
             observer: '_followupchanged',
-	    reflectToAttribute: true,
+	    	reflectToAttribute: true
           },
           followuparray: {
             type: Array,
             value: function () {
                     return [];
-            	},
+            }
           },
           editmode: {
+          	type: Boolean,
+          	reflectToAttribute: true,
+          	notify: true,
+          	value: false,
+			observer: '_debuger'
+
+          },
+          isnew: {
           	type: Boolean,
           	reflectToAttribute: true,
           	notify: true,
@@ -137,16 +145,29 @@
           },
           name: {
           	type: String,
-          	value: '',
-		reflectToAttribute: true,
+          	reflectToAttribute: true,
+          	notify: true,
+          	value: ''
+		
           },
           date: {
           	type: String,
-          	value: '',
-		reflectToAttribute: true,
+          	reflectToAttribute: true,
+          	value: ''
+          },
+          backupvalues: {
+          	type: Object,
+          	value: function() { return {}; }
           }
         };
       }
+      ready() {
+        super.ready();
+        var supThis = this;
+        //Polymer.Gestures.addListener(this, 'tap', e => this.tapHandler(e));       this.$.cancelbutton
+       	this.$.cancelbutton.addEventListener('click', e => this._exiteditmode(e, supThis));
+       	this.$.editbutton.addEventListener('click', e => this._entereditmode(e, supThis));
+    	}
       _followupchanged() {
 		console.log(this.followup.split(","));
       	//var array = JSON.parse("[" + this.followup + "]");
@@ -154,25 +175,38 @@
       	this.followuparray = this.followup.split(",");
       	console.log(this.followuparray);
       }
-      _entereditmode(event) {
-      	this.editmode = true;
-	      console.log(this.editmode)
-	this.notifyPath('editmode');
-	this.set('editmode', true);
+      _debuger() {
+      	console.log("CHANGE RECORDED");
       }
-      _exiteditmode(event) {
-      	this.editmode = false;
-      	/*console.log(this.shadowRoot.querySelectorAll("#contentStatic"))
-      	this.shadowRoot.querySelectorAll("#contentStatic").style.display = 'none';*/
-      	console.log(this.editmode)
-	this.set('editmode', false);
-	 console.log(this);    
+      _entereditmode(event, supThis) {
+      	//backup
+      	supThis.set('backupvalues.title', this.title);
+      	supThis.set('backupvalues.desc', this.desc);
+      	supThis.set('backupvalues.followup', this.followup);
+      	supThis.set('backupvalues.followuparray', this.followuparray);
+      	supThis.set('backupvalues.name', this.name);
+      	supThis.set('backupvalues.date', this.date);
+		supThis.set('editmode', true);
       }
+      _exiteditmode(event, supThis) {
+      	
+      	if(this.isnew == true) {
+      		supThis.remove()
+      		console.log("Removed element because the element was never saved. (isnew == true)")
+      	} else {
+			console.log("exited edit mode");
+			supThis.set('editmode', false);
+		}
+      }
+
 
       //followup-changed.addEventListener
     }
     customElements.define(LogCard.is, LogCard);
 
+    Node.prototype.$find = function(selector){
+                  return jQuery(this.shadowRoot.querySelectorAll(selector))
+     }
   </script>
 
 </dom-module>
