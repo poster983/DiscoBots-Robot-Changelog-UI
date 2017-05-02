@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "body-parser": "~1.16.0",
+    "bower": "latest",
     "connect-ensure-login": "latest",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.0",
@@ -32,11 +33,11 @@
     "express-session": "latest",
     "morgan": "~1.7.0",
     "mustache-express": "1.2.4",
+    "nedb": "^1.8.0",
     "node-sass-middleware": "0.9.8",
     "nodemon": "latest",
     "serve-favicon": "~2.3.2",
-    "socket.io": "^1.7.3",
-    "bower": "latest"
+    "socket.io": "^1.7.3"
   },
   "license": "UNLICENSED"
 }

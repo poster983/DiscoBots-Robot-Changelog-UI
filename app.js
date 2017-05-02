@@ -8,6 +8,9 @@ var bodyParser = require('body-parser');
 var mustacheExpress = require('mustache-express');
 var socket_io    = require( "socket.io" );
 
+var Datastore = require('nedb')
+  , db = new Datastore({ filename: 'datastores/changes.db', autoload: true });
+
 
 var app = express();
 
@@ -25,6 +28,23 @@ io.on( "connection", function( socket )
     socket.on('chat message', function(msg){
       console.log('message: ' + msg);
        io.emit('chat message', msg);
+    });
+
+    socket.on('sent changelog', function(jsonArr){
+      console.log('Recieved a new changelog: ' + jsonArr);
+       db.insert(jsonArr, function (err, newDoc) {   // Callback is optional
+          // newDoc is the newly inserted document, including its _id
+          // newDoc has no key called notToBeSaved since its value was undefined
+
+          if(err) {
+            console.error(err);
+            socket.emit('save error', "Error saving your change.");
+          } else {
+            socket.broadcast.emit('new change', jsonArr);
+            
+            
+          }
+        });
     });
 
     socket.on('disconnect', function(){

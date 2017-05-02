@@ -64,7 +64,7 @@
 		  	<div id="contentStatic"  hidden$="{{!editmode}}">
 			    <paper-input value="{{title}}" label="Title"></paper-input>
 			    <paper-textarea value="{{desc}}" label="Description of Change"></paper-textarea>
-			    <paper-chip-input label="(Hit enter) Change may effect:" chips='{{followup}}' closable></paper-chip-input> 
+			    <paper-chip-input label="(Hit enter) Change may effect:" items='{{followuparray}}' chips='{{followup}}' closable></paper-chip-input> 
 			    <!--TODO: DATE PICKER-->
 			    <paper-input value="{{name}}" label="Your Name"></paper-input>
 		    </div>
@@ -74,7 +74,7 @@
 			  	<div class="title">[[title]]
 			  		<div class="date">
 			  			<iron-icon icon="today"></iron-icon>
-			  			<span>[[date]]</span>
+			  			<span>[[date.readable]]</span>
 		  			</div>
 			  	</div>
 			  	<div>Change may effect:</div>
@@ -88,8 +88,8 @@
 		  
 		  <div class="card-actions">
 		  <div id="contentEditBottom"  hidden$="{{!editmode}}">
-		  		<paper-button on-tap$="sendNewChangelog('[[title]]')" class="save">Save</paper-button>
-		  		<paper-button  id="cancelbutton" class="edit">Cancel</paper-button>
+		  		<paper-button id="submitSaveButton" class="save">Save</paper-button>
+		  		<paper-button id="cancelbutton" class="edit">Cancel</paper-button>
 		  </div>
 		   <div id="contentStaticBottom"  hidden$="{{editmode}}">
 		    	<paper-button id="editbutton" class="edit">Edit</paper-button>
@@ -104,6 +104,7 @@
     class LogCard extends Polymer.Element {
       static get is() { return "log-card"; }
       
+
 
       static get properties() {
         return {
@@ -151,9 +152,9 @@
 		
           },
           date: {
-          	type: String,
+          	type: Object,
           	reflectToAttribute: true,
-          	value: ''
+          	value: function() { return {abs: new Date(), readable: new Date().toDateString()}; }
           },
           backupvalues: {
           	type: Object,
@@ -164,16 +165,32 @@
       ready() {
         super.ready();
         var supThis = this;
+        if(this.isnew) {
+          this.set('date.abs', new Date());
+          this.set('date.readable', this.date.abs.toDateString());
+          console.log(this.date)
+        } else if(this.date == null) {
+          console.warn("No date supplied, fallingback to current date.");
+          console.log(this.date)
+        } else {
+           supThis.set('date.abs', new Date(supThis.date));
+          supThis.set('date.readable', supThis.date.abs.toDateString());
+        }
+        console.log(this.date)
+
         //Polymer.Gestures.addListener(this, 'tap', e => this.tapHandler(e));       this.$.cancelbutton
        	this.$.cancelbutton.addEventListener('click', e => this._exiteditmode(e, supThis));
        	this.$.editbutton.addEventListener('click', e => this._entereditmode(e, supThis));
+       	this.$.submitSaveButton.addEventListener('click', e => this._submitsaveevent(e, supThis));
     	}
       _followupchanged() {
-		console.log(this.followup.split(","));
+		//console.log(this.followup.split(","));
       	//var array = JSON.parse("[" + this.followup + "]");
       	//console.log(this.followuparray);
-      	this.followuparray = this.followup.split(",");
-      	console.log(this.followuparray);
+      	if(this.followup) {
+      		this.followuparray = this.followup.split(",");
+      	}
+      	//console.log(this.followuparray);
       }
       _debuger() {
       	console.log("CHANGE RECORDED");
@@ -186,17 +203,38 @@
       	supThis.set('backupvalues.followuparray', this.followuparray);
       	supThis.set('backupvalues.name', this.name);
       	supThis.set('backupvalues.date', this.date);
+
+      	supThis._followupchanged();
+      	//entering edit mode
+      	console.log("Entering edit mode");
 		supThis.set('editmode', true);
       }
       _exiteditmode(event, supThis) {
-      	
       	if(this.isnew == true) {
       		supThis.remove()
       		console.log("Removed element because the element was never saved. (isnew == true)")
       	} else {
-			console.log("exited edit mode");
+      		//restoring old values
+      		supThis.set('title', this.backupvalues.title);
+      		supThis.set('desc', this.backupvalues.desc);
+      		supThis.set('followup', this.backupvalues.followup);
+      		supThis.set('followuparray', this.backupvalues.followuparray);
+      		supThis.set('name', this.backupvalues.name);
+      		supThis.set('date', this.backupvalues.date);
+
+			console.log("Exited edit mode");
 			supThis.set('editmode', false);
 		}
+      }
+
+      _submitsaveevent(event, supThis) {
+      	console.log("Saveing...");
+      	// chance to do what you want
+
+      	sendNewChangelog(this.title, this.desc, this.followup, this.name, this.date.abs);
+
+      	supThis.set('isnew', false);
+      	supThis.set('editmode', false);
       }
 
 
