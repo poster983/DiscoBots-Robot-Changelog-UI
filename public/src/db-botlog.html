@@ -64,13 +64,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         //Get new Changes
         socket.on('new change', function(json){
-          console.log(json);
+          console.log(json._id);
           var NewLogCard = new LogCard();
           NewLogCard.title = json.title;
           NewLogCard.desc = json.desc;
           NewLogCard.followup = json.followup;
           NewLogCard.name = json.name;
           NewLogCard.date = json.date;
+          NewLogCard.id = json._id;
           supThis.$.logcardarea.insertBefore(NewLogCard ,supThis.$.logcardarea.children[0]); 
         });
 

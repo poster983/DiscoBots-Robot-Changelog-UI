@@ -40,7 +40,7 @@ io.on( "connection", function( socket )
             console.error(err);
             socket.emit('save error', "Error saving your change.");
           } else {
-            socket.broadcast.emit('new change', jsonArr);
+            socket.broadcast.emit('new change', newDoc);
             
             
           }
