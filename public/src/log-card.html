@@ -62,23 +62,23 @@
 	<paper-card>
 		  <div class="card-content">
 		  	<div id="contentStatic"  hidden$="{{!editmode}}">
-			    <paper-input value="{{title}}" label="Title"></paper-input>
+			    <paper-input value="{{short}}" label="Title"></paper-input>
 			    <paper-textarea value="{{desc}}" label="Description of Change"></paper-textarea>
-			    <paper-chip-input label="(Hit enter) Change may effect:" items='{{followuparray}}' chips='{{followup}}' closable></paper-chip-input> 
+			    <paper-chip-input label="(Hit enter) Change may effect:" items='{{_followuparray}}' chips='{{followup}}' closable></paper-chip-input> 
 			    <!--TODO: DATE PICKER-->
 			    <paper-input value="{{name}}" label="Your Name"></paper-input>
 		    </div>
 
 
 		   <div id="contentEdit"  hidden$="{{editmode}}">
-			  	<div class="title">[[title]]
+			  	<div class="title">[[short]]
 			  		<div class="date">
 			  			<iron-icon icon="today"></iron-icon>
-			  			<span>[[date.readable]]</span>
+			  			<span>[[_dateObj.readable]]</span>
 		  			</div>
 			  	</div>
 			  	<div>Change may effect:</div>
-			  	<template is="dom-repeat" items="{{followuparray}}">
+			  	<template is="dom-repeat" items="{{_followuparray}}">
 	 				<paper-chip label$="[[item]]"></paper-chip>
 			  	</template>
 			  	<div>Posted by: [[name]]</div>
@@ -108,23 +108,23 @@
 
       static get properties() {
         return {
-          title: {
+          short: {
             type: String,
             value: 'New Change',
-	     	reflectToAttribute: true
+     	      reflectToAttribute: true
           },
           desc: {
             type: String,
             value: '',
-	    	reflectToAttribute: true
+	    	    reflectToAttribute: true
           },
           followup: {
             type: String,
             value: '',
             observer: '_followupchanged',
-	    	reflectToAttribute: true
+	    	    reflectToAttribute: true
           },
-          followuparray: {
+          _followuparray: {
             type: Array,
             value: function () {
                     return [];
@@ -135,7 +135,7 @@
           	reflectToAttribute: true,
           	notify: true,
           	value: false,
-			observer: '_debuger'
+	          observer: '_debuger'
 
           },
           isnew: {
@@ -152,13 +152,22 @@
 		
           },
           date: {
-          	type: Object,
-          	reflectToAttribute: true,
-          	value: function() { return {abs: new Date(), readable: new Date().toDateString()}; }
+            type: String,
+            reflectToAttribute: true,
+            value: function() {return new Date();} 
           },
-          backupvalues: {
+          _dateObj: {
+            type: Object,
+            value: function() {return {}} 
+          },
+          _backupvalues: {
           	type: Object,
           	value: function() { return {}; }
+          },
+          id: {
+            type: String,
+            reflectToAttribute: true,
+            value: 'newlog'
           }
         };
       }
@@ -166,15 +175,17 @@
         super.ready();
         var supThis = this;
         if(this.isnew) {
-          this.set('date.abs', new Date());
-          this.set('date.readable', this.date.abs.toDateString());
+          this.set('_dateObj.abs', new Date());
+          this.set('_dateObj.readable', this._dateObj.abs.toDateString());
           console.log(this.date)
-        } else if(this.date == null) {
-          console.warn("No date supplied, fallingback to current date.");
-          console.log(this.date)
+        } else if(this.date) {
+          
+          this.set('_dateObj.abs', new Date(this.date));
+          this.set('_dateObj.readable', new Date(this.date).toDateString());
         } else {
-           supThis.set('date.abs', new Date(supThis.date));
-          supThis.set('date.readable', supThis.date.abs.toDateString());
+          console.warn("No date supplied, fallingback to current date.");
+           supThis.set('_dateObj.abs', new Date());
+          supThis.set('_dateObj.readable', supThis._dateObj.abs.toDateString());
         }
         console.log(this.date)
 
@@ -188,7 +199,7 @@
       	//var array = JSON.parse("[" + this.followup + "]");
       	//console.log(this.followuparray);
       	if(this.followup) {
-      		this.followuparray = this.followup.split(",");
+      		this._followuparray = this.followup.split(",");
       	}
       	//console.log(this.followuparray);
       }
@@ -197,12 +208,12 @@
       }
       _entereditmode(event, supThis) {
       	//backup
-      	supThis.set('backupvalues.title', this.title);
-      	supThis.set('backupvalues.desc', this.desc);
-      	supThis.set('backupvalues.followup', this.followup);
-      	supThis.set('backupvalues.followuparray', this.followuparray);
-      	supThis.set('backupvalues.name', this.name);
-      	supThis.set('backupvalues.date', this.date);
+      	supThis.set('_backupvalues.short', this.short);
+      	supThis.set('_backupvalues.desc', this.desc);
+      	supThis.set('_backupvalues.followup', this.followup);
+      	supThis.set('_backupvalues._followuparray', this._followuparray);
+      	supThis.set('_backupvalues.name', this.name);
+      	supThis.set('_backupvalues.date', this.date);
 
       	supThis._followupchanged();
       	//entering edit mode
@@ -215,12 +226,12 @@
       		console.log("Removed element because the element was never saved. (isnew == true)")
       	} else {
       		//restoring old values
-      		supThis.set('title', this.backupvalues.title);
-      		supThis.set('desc', this.backupvalues.desc);
-      		supThis.set('followup', this.backupvalues.followup);
-      		supThis.set('followuparray', this.backupvalues.followuparray);
-      		supThis.set('name', this.backupvalues.name);
-      		supThis.set('date', this.backupvalues.date);
+      		supThis.set('short', this._backupvalues.short);
+      		supThis.set('desc', this._backupvalues.desc);
+      		supThis.set('followup', this._backupvalues.followup);
+      		supThis.set('_followuparray', this._backupvalues._followuparray);
+      		supThis.set('name', this._backupvalues.name);
+      		supThis.set('date', this._backupvalues.date);
 
 			console.log("Exited edit mode");
 			supThis.set('editmode', false);
@@ -231,7 +242,7 @@
       	console.log("Saveing...");
       	// chance to do what you want
 
-      	sendNewChangelog(this.title, this.desc, this.followup, this.name, this.date.abs);
+      	sendNewChangelog(this.short, this.desc, this.followup, this.name, this._dateObj.abs);
 
       	supThis.set('isnew', false);
       	supThis.set('editmode', false);

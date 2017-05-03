@@ -7,7 +7,8 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mustacheExpress = require('mustache-express');
 var socket_io    = require( "socket.io" );
-
+var cowsay = require("cowsay");
+var fortuneSource = require('fortune-tweetable');
 var Datastore = require('nedb')
   , db = new Datastore({ filename: 'datastores/changes.db', autoload: true });
 
@@ -41,8 +42,9 @@ io.on( "connection", function( socket )
             socket.emit('save error', "Error saving your change.");
           } else {
             socket.broadcast.emit('new change', newDoc);
-            
-            
+            socket.emit('new change user', newDoc._id);
+
+
           }
         });
     });
@@ -77,8 +79,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/bower_components', express.static(path.join(__dirname, 'bower_components')));
 app.use('/bower_components', express.static(path.join(__dirname, 'custom_polymer_components')));
 // TOP LEVEL ROUTE
-app.get('*', function(req, res) {
-    res.sendFile('./public/index.html', {root: '.'}); 
+app.get('*', function(req, res, next) {
+  var cowsaid = cowsay.say({
+    text : fortuneSource.fortune(),
+    e : "oo"
+  });
+    res.render('index', { cows: unescape(cowsaid)});
+    //res.sendFile('./public/index.html', {root: '.'}); 
 });
 
 

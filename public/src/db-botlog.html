@@ -23,7 +23,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
       paper-fab {
         position: fixed;
-        right: 25px;
+        right: 25px; 
         bottom: 30px;
         background-color: var(--app-accent-color);
     }
@@ -32,8 +32,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     </style>
     <div id="logcardarea">
-      <log-card id="log1" isnew editmode></log-card>
-      <log-card id="log2" title="New Arm" desc="We replaced the old arm with a lighter one so the robot wont fall over.  Unfortunately, we had to move the motors." followup="programmers,design notebook" name="Joseph" ></log-card>
+      <log-card isnew editmode></log-card>
+      <log-card id="log2" short="New Arm" desc="We replaced the old arm with a lighter one so the robot wont fall over.  Unfortunately, we had to move the motors." followup="programmers,design notebook" name="Joseph" ></log-card>
     </div>
     <!-- New Change -->
   <paper-fab icon="build"></paper-fab>
@@ -46,7 +46,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <script>
     class DbBotLog extends Polymer.Element {
       static get is() { return 'db-botlog'; }
-      static get supThis() { return this; }
       ready() {
         super.ready();
         var supThis = this;
@@ -66,13 +65,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         socket.on('new change', function(json){
           console.log(json._id);
           var NewLogCard = new LogCard();
-          NewLogCard.title = json.title;
+          NewLogCard.short = json.short;
           NewLogCard.desc = json.desc;
           NewLogCard.followup = json.followup;
           NewLogCard.name = json.name;
           NewLogCard.date = json.date;
           NewLogCard.id = json._id;
           supThis.$.logcardarea.insertBefore(NewLogCard ,supThis.$.logcardarea.children[0]); 
+        });
+        // Get new Id
+         socket.on('new change user', function(id){
+          supThis.$find('#newlog').attr('id', id);
         });
 
       }
@@ -91,10 +94,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }
           */
 
-    function sendNewChangelog(title, desc, followup, name, date) {
-      console.log(title);
+    function sendNewChangelog(short, desc, followup, name, date) {
+      
         var jsonArr = { 
-          title: title,
+          short: short,
           desc: desc,
           followup: followup,
           name: name,
