@@ -26,12 +26,18 @@ io.on( "connection", function( socket )
 {
     console.log( "A user connected" );
 
-    socket.on('chat message', function(msg){
-      console.log('message: ' + msg);
-       io.emit('chat message', msg);
+
+    //Send all relevant changes      ).sort({ date: 1 }).exec(
+
+    socket.on('load changes', function(thing){
+        db.find({}).sort({ date: 1 }).exec( function (err, docs) {
+          console.error(err);
+          console.error(docs);
+          socket.emit('full changelog', docs);
+        });
     });
 
-    socket.on('sent changelog', function(jsonArr){
+    socket.on('sent new changelog', function(jsonArr){
       console.log('Recieved a new changelog: ' + jsonArr);
        db.insert(jsonArr, function (err, newDoc) {   // Callback is optional
           // newDoc is the newly inserted document, including its _id
@@ -45,6 +51,22 @@ io.on( "connection", function( socket )
             socket.emit('new change user', newDoc._id);
 
 
+          }
+        });
+    });
+
+    socket.on('update changelog', function(jsonArr){
+      console.log('Recieved a request to update a changelog: ' + jsonArr);
+       db.update({_id: jsonArr._id}, jsonArr, {}, function (err) {   // Callback is optional
+          // newDoc is the newly inserted document, including its _id
+          // newDoc has no key called notToBeSaved since its value was undefined
+          console.error(err);
+          db.persistence.compactDatafile();
+          if(err) {
+            console.error(err);
+            socket.emit('save error', "Error saving your change.");
+          } else {
+            socket.broadcast.emit('new updated change', jsonArr);
           }
         });
     });

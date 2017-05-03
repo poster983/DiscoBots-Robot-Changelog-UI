@@ -187,7 +187,7 @@
            supThis.set('_dateObj.abs', new Date());
           supThis.set('_dateObj.readable', supThis._dateObj.abs.toDateString());
         }
-        console.log(this.date)
+        
 
         //Polymer.Gestures.addListener(this, 'tap', e => this.tapHandler(e));       this.$.cancelbutton
        	this.$.cancelbutton.addEventListener('click', e => this._exiteditmode(e, supThis));
@@ -241,10 +241,12 @@
       _submitsaveevent(event, supThis) {
       	console.log("Saveing...");
       	// chance to do what you want
-
-      	sendNewChangelog(this.short, this.desc, this.followup, this.name, this._dateObj.abs);
-
-      	supThis.set('isnew', false);
+        if(supThis.id == 'newlog' || supThis.isnew == true) {
+      	   sendNewChangelog(this.short, this.desc, this.followup, this.name, this._dateObj.abs);
+      	   supThis.set('isnew', false);
+        } else {
+          sendChangelog(this.short, this.desc, this.followup, this.name, this._dateObj.abs, this.id);
+        }
       	supThis.set('editmode', false);
       }
 

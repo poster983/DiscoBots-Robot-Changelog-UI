@@ -32,11 +32,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     </style>
     <div id="logcardarea">
-      <log-card isnew editmode></log-card>
-      <log-card id="log2" short="New Arm" desc="We replaced the old arm with a lighter one so the robot wont fall over.  Unfortunately, we had to move the motors." followup="programmers,design notebook" name="Joseph" ></log-card>
+      <!--<log-card isnew editmode></log-card>
+      <log-card id="log2" short="New Arm" desc="We replaced the old arm with a lighter one so the robot wont fall over.  Unfortunately, we had to move the motors." followup="programmers,design notebook" name="Joseph" ></log-card>-->
     </div>
     <!-- New Change -->
-  <paper-fab icon="build"></paper-fab>
+  <paper-fab id="newchangefab" icon="build"></paper-fab>
    
 
 
@@ -49,13 +49,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       ready() {
         super.ready();
         var supThis = this;
-            
-        socket.emit('chat message', 'hello');
-        socket.on('chat message', function(msg){
-          console.log(msg);
-          supThis.$find('#log1').attr('desc', msg);
+        /*ELs*/
+        this.$.newchangefab.addEventListener('click', e => this._newlogcard(e, supThis));
 
-        });
+        /* Socket.io */
+        socket.emit('load changes', 'loadem');
+
         //Need Toast
         socket.on('save error', function(msg){
           console.error(msg);
@@ -77,7 +76,44 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          socket.on('new change user', function(id){
           supThis.$find('#newlog').attr('id', id);
         });
+         // check for updates in the db
+         socket.on('new updated change', function(json){
+          console.log("Updated: " + json._id);
+          console.log(upLogCard);
+          var upLogCard = supThis.$find('#' + json._id);
+          upLogCard.attr('short', json.short);
+          upLogCard.attr('desc', json.desc);
+          upLogCard.attr('followup', json.followup);
+          upLogCard.attr('name', json.name);
+          upLogCard.attr('date', json.date);
+          upLogCard.attr('id', json._id);
+        });
 
+
+          socket.on('full changelog', function(docs){
+            
+            for(let obj of docs) {
+               var NewLogCard = new LogCard();
+                NewLogCard.short = obj.short;
+                NewLogCard.desc = obj.desc;
+                NewLogCard.followup = obj.followup;
+                NewLogCard.name = obj.name;
+                NewLogCard.date = obj.date;
+                NewLogCard.id = obj._id;
+                supThis.$.logcardarea.insertBefore(NewLogCard ,supThis.$.logcardarea.children[0]); 
+            }
+          });
+      }
+
+      _newlogcard(event, supThis) {
+        console.log("Click");
+        console.log(supThis.$find('#newlog'));
+        if(supThis.$find('#newlog').length < 1) {
+          var NewLogCard = new LogCard();
+          NewLogCard.isnew = true;
+          NewLogCard.editmode = true;
+          supThis.$.logcardarea.insertBefore(NewLogCard ,supThis.$.logcardarea.children[0]); 
+        }
       }
 
     }
@@ -103,9 +139,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           name: name,
           date: date
         }
-       socket.emit('sent changelog', jsonArr);
+       socket.emit('sent new changelog', jsonArr);
       }
+    function sendChangelog(short, desc, followup, name, date, id) {
       
+        var jsonArr = { 
+          short: short,
+          desc: desc,
+          followup: followup,
+          name: name,
+          date: date,
+          _id: id
+        }
+       socket.emit('update changelog', jsonArr);
+      }
 
 
 
