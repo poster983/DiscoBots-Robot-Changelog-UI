@@ -5,3 +5,5 @@ node_modules/
 project\.sublime-workspace
 
 datastores/changes\.db
+
+\.env

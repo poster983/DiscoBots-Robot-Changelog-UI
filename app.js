@@ -9,8 +9,20 @@ var mustacheExpress = require('mustache-express');
 var socket_io    = require( "socket.io" );
 var cowsay = require("cowsay");
 var fortuneSource = require('fortune-tweetable');
-var Datastore = require('nedb')
-  , db = new Datastore({ filename: 'datastores/changes.db', autoload: true });
+var MongoClient = require('mongodb').MongoClient
+  , assert = require('assert');
+  //heroku  env var
+var mongoURI = process.env.MONGODB_URI;
+
+//Connect to mongodb
+var mdb;
+MongoClient.connect(mongoURI, function(err, db) {
+  assert.equal(null, err);
+  console.log("Connected successfully to server");
+  mdb = db;
+  //db.close();
+});
+
 
 
 var app = express();
@@ -21,60 +33,7 @@ var io           = socket_io();
 app.io           = io;
 
 
-// socket.io events
-io.on( "connection", function( socket )
-{
-    console.log( "A user connected" );
 
-
-    //Send all relevant changes      ).sort({ date: 1 }).exec(
-
-    socket.on('load changes', function(thing){
-        db.find({}).sort({ date: 1 }).exec( function (err, docs) {
-          console.error(err);
-          console.error(docs);
-          socket.emit('full changelog', docs);
-        });
-    });
-
-    socket.on('sent new changelog', function(jsonArr){
-      console.log('Recieved a new changelog: ' + jsonArr);
-       db.insert(jsonArr, function (err, newDoc) {   // Callback is optional
-          // newDoc is the newly inserted document, including its _id
-          // newDoc has no key called notToBeSaved since its value was undefined
-
-          if(err) {
-            console.error(err);
-            socket.emit('save error', "Error saving your change.");
-          } else {
-            socket.broadcast.emit('new change', newDoc);
-            socket.emit('new change user', newDoc._id);
-
-
-          }
-        });
-    });
-
-    socket.on('update changelog', function(jsonArr){
-      console.log('Recieved a request to update a changelog: ' + jsonArr);
-       db.update({_id: jsonArr._id}, jsonArr, {}, function (err) {   // Callback is optional
-          // newDoc is the newly inserted document, including its _id
-          // newDoc has no key called notToBeSaved since its value was undefined
-          console.error(err);
-          db.persistence.compactDatafile();
-          if(err) {
-            console.error(err);
-            socket.emit('save error', "Error saving your change.");
-          } else {
-            socket.broadcast.emit('new updated change', jsonArr);
-          }
-        });
-    });
-
-    socket.on('disconnect', function(){
-        console.log('user disconnected');
-    });
-});
 
 
 app.engine('mustache', mustacheExpress());
@@ -100,6 +59,78 @@ app.use(require('node-sass-middleware')({
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/bower_components', express.static(path.join(__dirname, 'bower_components')));
 app.use('/bower_components', express.static(path.join(__dirname, 'custom_polymer_components')));
+
+
+// socket.io events
+io.on( "connection", function( socket )
+{
+    console.log( "A user connected" );
+
+
+    //Send all relevant changes      ).sort({ date: 1 }).exec(
+
+    socket.on('load changes', function(thing){
+      /*
+        db.find({}).sort({ date: 1 }).exec( function (err, docs) {
+          console.error(err);
+          console.error(docs);
+          socket.emit('full changelog', docs);
+        });
+        */
+    });
+
+    socket.on('sent new changelog', function(jsonArr){
+      console.log('Recieved a new changelog: ' + jsonArr);
+       mdb.collection(process.env.COLLECTION).insert(jsonArr, function(err, records) {
+          if (err) {
+            socket.emit('save error', "Error saving your change.");
+            throw err;
+          } else {
+            socket.broadcast.emit('new change', records);
+            socket.emit('new change user', records.ops[0]._id);
+          }
+          console.log(records);
+          console.log("Record added as "+records.ops[0]._id);
+        });
+       /*
+       db.insert(jsonArr, function (err, newDoc) {   // Callback is optional
+          // newDoc is the newly inserted document, including its _id
+          // newDoc has no key called notToBeSaved since its value was undefined
+
+          if(err) {
+            console.error(err);
+            socket.emit('save error', "Error saving your change.");
+          } else {
+            socket.broadcast.emit('new change', newDoc);
+            socket.emit('new change user', newDoc._id);
+
+
+          }
+        });*/
+    });
+
+    socket.on('update changelog', function(jsonArr){
+      console.log('Recieved a request to update a changelog: ' + jsonArr);
+       db.update({_id: jsonArr._id}, jsonArr, {}, function (err) {   // Callback is optional
+          // newDoc is the newly inserted document, including its _id
+          // newDoc has no key called notToBeSaved since its value was undefined
+          console.error(err);
+          db.persistence.compactDatafile();
+          if(err) {
+            console.error(err);
+            socket.emit('save error', "Error saving your change.");
+          } else {
+            socket.broadcast.emit('new updated change', jsonArr);
+          }
+        });
+    });
+
+    socket.on('disconnect', function(){
+        console.log('user disconnected');
+    });
+});
+
+
 // TOP LEVEL ROUTE
 app.get('*', function(req, res, next) {
   var cowsaid = cowsay.say({
