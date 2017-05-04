@@ -23,7 +23,7 @@ MongoClient.connect(mongoURI, function(err, db) {
   //db.close();
 });
 
-
+//TODO: Check if process.env.COLLECTION is empty, and if it is, roll to production.
 
 var app = express();
 
