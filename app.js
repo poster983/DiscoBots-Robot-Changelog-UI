@@ -11,6 +11,7 @@ var cowsay = require("cowsay");
 var fortuneSource = require('fortune-tweetable');
 var MongoClient = require('mongodb').MongoClient
   , assert = require('assert');
+var ObjectId = require('mongodb').ObjectID;
   //heroku  env var
 var mongoURI = process.env.MONGODB_URI;
 
@@ -19,7 +20,7 @@ var mdb;
 MongoClient.connect(mongoURI, function(err, db) {
   assert.equal(null, err);
   console.log("Connected successfully to server");
-  mdb = db;
+  mdb = db; 
   //db.close();
 });
 
@@ -69,7 +70,11 @@ io.on( "connection", function( socket )
 
     //Send all relevant changes      ).sort({ date: 1 }).exec(
 
-    socket.on('load changes', function(thing){
+    socket.on('load changes', function(bot){
+      mdb.collection(process.env.COLLECTION).find({}).sort({ date: 1 }).toArray(function(err, docs) {
+        console.log(docs)
+        socket.emit('full changelog', docs);
+      });
       /*
         db.find({}).sort({ date: 1 }).exec( function (err, docs) {
           console.error(err);
@@ -110,19 +115,32 @@ io.on( "connection", function( socket )
     });
 
     socket.on('update changelog', function(jsonArr){
-      console.log('Recieved a request to update a changelog: ' + jsonArr);
+      var saveSearch = jsonArr;
+      delete saveSearch._id
+      console.log('Recieved a request to update a changelog: ' + saveSearch.short);
+      console.log(ObjectId(jsonArr._id));
+      mdb.collection(process.env.COLLECTION).update({_id: ObjectId(jsonArr._id)}, {$set:saveSearch}, { upstart: true }, function(err, count){
+        console.log("run update. " + count + "docs changed.");
+        if (err) {
+          throw err;
+            socket.emit('save error', "Error saving your change.");
+            
+        } else {
+          socket.broadcast.emit('new updated change', jsonArr);
+        }
+      })
+      /*
        db.update({_id: jsonArr._id}, jsonArr, {}, function (err) {   // Callback is optional
           // newDoc is the newly inserted document, including its _id
           // newDoc has no key called notToBeSaved since its value was undefined
           console.error(err);
-          db.persistence.compactDatafile();
           if(err) {
             console.error(err);
             socket.emit('save error', "Error saving your change.");
           } else {
             socket.broadcast.emit('new updated change', jsonArr);
           }
-        });
+        });*/
     });
 
     socket.on('disconnect', function(){
