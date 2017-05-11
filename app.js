@@ -130,7 +130,7 @@ io.on( "connection", function( socket )
       var serID = jsonArr._id;
       delete jsonArr._id
       console.log('Recieved a request to update a changelog: ' + jsonArr.short);
-      console.log(serID);
+      console.log(jsonArr);
       console.log(ObjectId(serID));
       mdb.collection(defaultMongodColl).update({_id: ObjectId(serID)}, jsonArr, { upsert: false }, function(err, count){
         console.log("run update. " + count + "docs changed.");
@@ -139,6 +139,7 @@ io.on( "connection", function( socket )
             socket.emit('save error', "Error saving your change.");
             
         } else {
+          jsonArr._id = serID;
           socket.broadcast.emit('new updated change', jsonArr);
         }
       })
@@ -164,11 +165,13 @@ io.on( "connection", function( socket )
 app.use('/auth', auth);
 
 // TOP LEVEL ROUTE
-app.get('*', checkAuth.ensureLoggedIn('/auth'), function(req, res, next) {
+app.get('*', checkAuth.ensureLoggedIn('/auth'), function(req, res, next) { //
   var cowsaid = cowsay.say({
     text : fortuneSource.fortune(),
     e : "oo"
   });
+  console.log("USER:");
+  console.log(req.user);
     res.render('index', { cows: unescape(cowsaid)});
     //res.sendFile('./public/index.html', {root: '.'}); 
 });

@@ -79,8 +79,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          // check for updates in the db
          socket.on('new updated change', function(json){
           console.log("Updated: " + json._id);
-          console.log(upLogCard);
-          var upLogCard = supThis.$find('#' + json._id);
+          
+          //var upLogCard = supThis.$find('#' + json._id);
+          supThis.shadowRoot.querySelectorAll('#' + json._id)
+          console.log(json._id);
           upLogCard.attr('short', json.short);
           upLogCard.attr('desc', json.desc);
           upLogCard.attr('followup', json.followup);
