@@ -4,6 +4,7 @@
 
 * NodeJS  
 * A Mongodb Database
+* A project in the Google Developer Console for accounts
 
 ## Recommended Deployment  
 
@@ -12,10 +13,9 @@
 
 You won't need more than the free plan.  
 
-## Environment Variables(Config Variables)   
+## Config Variables  
 
-There are two Config Variables used:
+`./config/default.js`
 
-* `process.env.MONGODB_URI` is for holding your Mongodb URI. If you are using Heroku with the addon, it should automatically add this to the Config Variables. 
-* `process.env.COLLECTION` tells the app what collection in the database to connect to. (Ex "dev" and "production")
+
 

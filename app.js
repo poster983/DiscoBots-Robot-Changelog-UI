@@ -5,15 +5,23 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var passport = require('passport');
+var checkAuth = require('connect-ensure-login');
 var mustacheExpress = require('mustache-express');
 var socket_io    = require( "socket.io" );
 var cowsay = require("cowsay");
+var config = require('config');
+var flash = require('connect-flash');
 var fortuneSource = require('fortune-tweetable');
 var MongoClient = require('mongodb').MongoClient
   , assert = require('assert');
 var ObjectId = require('mongodb').ObjectID;
-  //heroku  env var
-var mongoURI = process.env.MONGODB_URI;
+  //Mongod defaults 
+var mongoURI = config.get('database.MONGODB_URI');
+var defaultMongodColl = config.get('database.changelogCOLLECTION');
+
+//Routes 
+var auth = require('./routes/auth');
 
 //Connect to mongodb
 var mdb;
@@ -51,6 +59,10 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(require('express-session')({ secret: config.get('local.secrets.sessionKey'), resave: false, saveUninitialized: false }));
+app.use(passport.initialize());
+app.use(passport.session());// persistent login sessions
+app.use(flash()); // use connect-flash for flash messages stored in session
 app.use(require('node-sass-middleware')({
   src: path.join(__dirname, 'public'),
   dest: path.join(__dirname, 'public'),
@@ -71,7 +83,7 @@ io.on( "connection", function( socket )
     //Send all relevant changes      ).sort({ date: 1 }).exec(
 
     socket.on('load changes', function(bot){
-      mdb.collection(process.env.COLLECTION).find({}).sort({ date: 1 }).toArray(function(err, docs) {
+      mdb.collection(defaultMongodColl).find({}).sort({ date: 1 }).toArray(function(err, docs) {
         console.log(docs)
         socket.emit('full changelog', docs);
       });
@@ -86,12 +98,12 @@ io.on( "connection", function( socket )
 
     socket.on('sent new changelog', function(jsonArr){
       console.log('Recieved a new changelog: ' + jsonArr);
-       mdb.collection(process.env.COLLECTION).insert(jsonArr, function(err, records) {
+       mdb.collection(defaultMongodColl).insert(jsonArr, function(err, records) {
           if (err) {
             socket.emit('save error', "Error saving your change.");
             throw err;
           } else {
-            socket.broadcast.emit('new change', records);
+            socket.broadcast.emit('new change', records.ops[0]);
             socket.emit('new change user', records.ops[0]._id);
           }
           console.log(records);
@@ -115,11 +127,12 @@ io.on( "connection", function( socket )
     });
 
     socket.on('update changelog', function(jsonArr){
-      var saveSearch = jsonArr;
-      delete saveSearch._id
-      console.log('Recieved a request to update a changelog: ' + saveSearch.short);
-      console.log(ObjectId(jsonArr._id));
-      mdb.collection(process.env.COLLECTION).update({_id: ObjectId(jsonArr._id)}, {$set:saveSearch}, { upstart: true }, function(err, count){
+      var serID = jsonArr._id;
+      delete jsonArr._id
+      console.log('Recieved a request to update a changelog: ' + jsonArr.short);
+      console.log(serID);
+      console.log(ObjectId(serID));
+      mdb.collection(defaultMongodColl).update({_id: ObjectId(serID)}, jsonArr, { upsert: false }, function(err, count){
         console.log("run update. " + count + "docs changed.");
         if (err) {
           throw err;
@@ -148,9 +161,10 @@ io.on( "connection", function( socket )
     });
 });
 
+app.use('/auth', auth);
 
 // TOP LEVEL ROUTE
-app.get('*', function(req, res, next) {
+app.get('*', checkAuth.ensureLoggedIn('/auth'), function(req, res, next) {
   var cowsaid = cowsay.say({
     text : fortuneSource.fortune(),
     e : "oo"
