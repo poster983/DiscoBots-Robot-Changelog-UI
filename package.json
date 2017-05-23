@@ -16,7 +16,7 @@
     "test": "npm run lint && polymer test",
     "postinstall": "./node_modules/bower/bin/bower install",
     "snyk-protect": "snyk protect",
-    "prepublish": "npm run snyk-protect"
+    "prepublish": "npm run snyk-protect" 
   },
   "repository": {
     "type": "git",
