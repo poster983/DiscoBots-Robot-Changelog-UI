@@ -1,4 +1,5 @@
 # DiscoBots-Robot-Changelog-UI for the Vex Robotics Team 2587K
+ [![Known Vulnerabilities](https://snyk.io/test/github/poster983/passport-live/badge.svg)](https://snyk.io/test/github/poster983/passport-live)  
 
 ## Requirements:  
 
