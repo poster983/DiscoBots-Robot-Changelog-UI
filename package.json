@@ -16,7 +16,7 @@
     "test": "npm run lint && polymer test",
     "postinstall": "./node_modules/bower/bin/bower install",
     "snyk-protect": "snyk protect",
-    "prepublish": "npm run snyk-protect" 
+    "prepublish": "npm run snyk-protect"
   },
   "repository": {
     "type": "git",
@@ -39,7 +39,7 @@
     "fortune-tweetable": "^1.0.0",
     "js-yaml": "^3.8.4",
     "mongodb": "^2.2.26",
-    "morgan": "~1.7.0",
+    "morgan": "~1.8.2",
     "mustache-express": "1.2.4",
     "node-sass-middleware": "0.9.8",
     "nodemon": "latest",
