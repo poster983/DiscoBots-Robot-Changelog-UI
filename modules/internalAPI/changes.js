@@ -33,4 +33,6 @@ var r = require("rethinkdb")
 var db = require("../modules/db/index.js")
 
 
-exports.getByTeam = (team, 
+exports.getByTeam = (team, robot) => {
+	
+}
