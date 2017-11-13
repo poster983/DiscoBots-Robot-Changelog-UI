@@ -6,7 +6,7 @@
 
 module.exports = {
 	userGroups: {
-		default: { 
+		default: { //donot change. non authed users and non verified users by an admin will be set tho this.
 			permissions: {
 				db: {
 					read: true;
