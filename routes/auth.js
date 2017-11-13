@@ -27,16 +27,14 @@ var checkAuth = require('connect-ensure-login');
         });
     });
 
-
+/*
 passport.use('google-signin', new GoogleStrategy({
     clientID: config.get('local.secrets.googleClientID'),
     clientSecret: config.get('local.secrets.googleClientSECRET'),
     callbackURL: config.get('server.url') + "/auth/google/callback/login"
   },
   function(accessToken, refreshToken, profile, done) {
-  /*  User.findOrCreate({ googleId: profile.id }, function (err, user) {
-      return cb(err, user);
-    });*/
+
     mdb.collection(accountsColl).findOne({"_id": profile.id}, function(err, docs) {
     	if (err) {
             return done(err);
@@ -108,7 +106,7 @@ passport.use('google-signup', new GoogleStrategy({
       });
 
   }
-));
+));*/
 
 
 router.get('/',function(req, res, next) {

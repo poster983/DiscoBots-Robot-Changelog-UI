@@ -61,7 +61,7 @@ app.use(express.static(path.jo in(__dirname, 'public')));
 app.use('/bower_components', express.static(path.join(__dirname, 'bower_components')));
 app.use('/bower_components', express.static(path.join(__dirname, 'custom_polymer_components')));
 
-
+/*
 // socket.io events
 io.on( "connection", function( socket )
 {
@@ -75,13 +75,6 @@ io.on( "connection", function( socket )
         console.log(docs)
         socket.emit('full changelog', docs);
       });
-      /*
-        db.find({}).sort({ date: 1 }).exec( function (err, docs) {
-          console.error(err);
-          console.error(docs);
-          socket.emit('full changelog', docs);
-        });
-        */
     });
 
     socket.on('sent new changelog', function(jsonArr){
@@ -149,7 +142,7 @@ io.on( "connection", function( socket )
         console.log('user disconnected');
     });
 });
-
+*/
 app.use('/auth', auth);
 
 // TOP LEVEL ROUTE

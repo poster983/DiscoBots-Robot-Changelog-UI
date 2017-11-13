@@ -16,6 +16,7 @@ module.exports = {
 			}
 		}
 	},
+	teams: ["kappa", "gamma", "solar"],
 	server: {
 		// EX: "https://www.example.com" OR "localhost:5000"
 		url: process.env.url
