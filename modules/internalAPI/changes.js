@@ -34,5 +34,12 @@ var db = require("../modules/db/index.js")
 
 
 exports.getByTeam = (team, robot) => {
-	
+	if(!robot) {robot = "*"}
+	r.table("changes").filter({
+		team: team
+	}).filter((change) => {
+		if(robot) {
+			return change("robot").contains(robot)
+		}	
+	})
 }
