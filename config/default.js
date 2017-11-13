@@ -24,13 +24,8 @@ module.exports = {
 	rethinkdb: {
 		host: "localhost",
 		port: 28015,
-		database: "passport",
+		database: "DBchangeLog",
 		password: "" //Dont Change.  Use local.json
-	},
-	database: {
-		MONGODB_URI: process.env.MONGODB_URI, // is for holding your Mongodb URI. If you are using Heroku with the addon, it should automatically add this to the Config Variables. 
-		changelogCOLLECTION: process.env.changelogCOLLECTION, // tells the app what collection in the database to connect to. (Ex "dev" and "production") for the Changelog
-		accountsCOLLECTION: process.env.accountsCOLLECTION //tells the app what collection in the database to connect to. (Ex "dev" and "production") for accounts
 	},
   	local: {
   		secrets: {

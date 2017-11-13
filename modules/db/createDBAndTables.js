@@ -25,22 +25,18 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org>
 */
 
-/**
- * @module api/changes
- */
+var r = require("rethinkdb");
+var db = require("./index.js");
+var config = require("config");
 
-var express = require('express');
-var router = express.Router();
-var changesAPI = require("../../modules/internalAPI/changes.js")
-/** 
- * Gets all bot changes for the team 
- * @function getTeamChanges
- * @api GET "/api/changes/:team"
- * @apiparam {String} team - the team name to search for changes.  
- * @apiquery {(undefined|string)} robot - Returns results only for the given robot.  
- */
-router.get("/:team/", (req, res, next) => {
 
-})
+r.dbList().contains(config.get("rethinkdb.database"))
+  .do(function(databaseExists) {
+    return r.branch(
+      databaseExists,
+      { dbs_created: 0 },
+      r.dbCreate(config.get("rethinkdb.database"))
+    );
+  }).run(db.conn()).then((dbRes) => {
 
-module.exports = router;
+  });
