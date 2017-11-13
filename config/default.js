@@ -5,10 +5,26 @@
 //var fs = require('fs');
 
 module.exports = {
-
+	userGroups: {
+		default: { 
+			permissions: {
+				db: {
+					read: true;
+					write: false;
+				},
+				dashboards: [""]
+			}
+		}
+	},
 	server: {
 		// EX: "https://www.example.com" OR "localhost:5000"
 		url: process.env.url
+	},
+	rethinkdb: {
+		host: "localhost",
+		port: 28015,
+		database: "passport",
+		password: "" //Dont Change.  Use local.json
 	},
 	database: {
 		MONGODB_URI: process.env.MONGODB_URI, // is for holding your Mongodb URI. If you are using Heroku with the addon, it should automatically add this to the Config Variables. 

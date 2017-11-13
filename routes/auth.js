@@ -5,21 +5,8 @@ var passport = require('passport');
 var GoogleStrategy = require('passport-google-oauth20').Strategy;
 var checkAuth = require('connect-ensure-login');
 
-var MongoClient = require('mongodb').MongoClient
-  , assert = require('assert');
-var ObjectId = require('mongodb').ObjectID;
-var mongoURI = config.get('database.MONGODB_URI');
-var accountsColl = config.get('database.accountsCOLLECTION');
 
 
-//Connect to mongodb
-var mdb;
-MongoClient.connect(mongoURI, function(err, db) {
-  assert.equal(null, err);
-  console.log("Connected successfully to server");
-  mdb = db; 
-  //db.close();
-});
 
 // used to serialize the user for the session
 

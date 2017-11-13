@@ -11,26 +11,15 @@ var mustacheExpress = require('mustache-express');
 var socket_io    = require( "socket.io" );
 var cowsay = require("cowsay");
 var config = require('config');
-var flash = require('connect-flash');
 var fortuneSource = require('fortune-tweetable');
-var MongoClient = require('mongodb').MongoClient
-  , assert = require('assert');
-var ObjectId = require('mongodb').ObjectID;
-  //Mongod defaults 
-var mongoURI = config.get('database.MONGODB_URI');
-var defaultMongodColl = config.get('database.changelogCOLLECTION');
+var r = require('rethinkdb');
+
+require('./modules/auth/index.js')(passport);// auth config
+require('./modules/db/index.js').setup();
 
 //Routes 
 var auth = require('./routes/auth');
 
-//Connect to mongodb
-var mdb;
-MongoClient.connect(mongoURI, function(err, db) {
-  assert.equal(null, err);
-  console.log("Connected successfully to server");
-  mdb = db; 
-  //db.close();
-});
 
 //TODO: Check if process.env.COLLECTION is empty, and if it is, roll to production.
 
@@ -62,14 +51,13 @@ app.use(cookieParser());
 app.use(require('express-session')({ secret: config.get('local.secrets.sessionKey'), resave: false, saveUninitialized: false }));
 app.use(passport.initialize());
 app.use(passport.session());// persistent login sessions
-app.use(flash()); // use connect-flash for flash messages stored in session
 app.use(require('node-sass-middleware')({
   src: path.join(__dirname, 'public'),
   dest: path.join(__dirname, 'public'),
   indentedSyntax: false,
   sourceMap: false
 }));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.jo in(__dirname, 'public')));
 app.use('/bower_components', express.static(path.join(__dirname, 'bower_components')));
 app.use('/bower_components', express.static(path.join(__dirname, 'custom_polymer_components')));
 
